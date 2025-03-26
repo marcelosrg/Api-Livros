@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.ToString;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -14,6 +15,7 @@ import java.util.UUID;
 @Getter
 @Setter
 @NoArgsConstructor
+@ToString
 @Table(name="autor")
 public class Autor {
     @Id
@@ -32,7 +34,8 @@ public class Autor {
     @Column(name= "nacionalidade", nullable = false, length = 50)
     private String nacionalidade;
 
-    @OneToMany(mappedBy = "autor")
+    @Transient
+//    @OneToMany(mappedBy = "autor")
     private List<Livro> livros;
 
 }
