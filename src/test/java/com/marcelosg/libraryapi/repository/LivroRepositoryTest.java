@@ -102,7 +102,8 @@ class LivroRepositoryTest {
 
         var autor = autorRepository.findById(idAutor).get();
 
-        List<Livro> livros = livroRepository.findByAutor(autor);
+        List<Livro> livrosLista = livroRepository.findByAutor(autor);
+        autor.setLivros(livrosLista);
 
         autor.getLivros().forEach(System.out::println);
 
