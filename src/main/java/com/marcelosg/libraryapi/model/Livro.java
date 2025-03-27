@@ -38,7 +38,11 @@ public class Livro {
     private BigDecimal preco;
 
     @JoinColumn(name="id_autor")
-    @ManyToOne
+    @ManyToOne(
+            fetch = FetchType.LAZY //retorna somente os dados do livro
+
+            //fetch = FetchType.EAGER // retorna os dados do livro e do autor
+    )
     private Autor autor;
 
 }

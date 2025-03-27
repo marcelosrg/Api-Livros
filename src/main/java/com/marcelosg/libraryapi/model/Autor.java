@@ -34,8 +34,7 @@ public class Autor {
     @Column(name= "nacionalidade", nullable = false, length = 50)
     private String nacionalidade;
 
-    @Transient
-//    @OneToMany(mappedBy = "autor")
+   @OneToMany(mappedBy = "autor")
     private List<Livro> livros;
 
 }
