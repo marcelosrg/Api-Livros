@@ -15,7 +15,7 @@ import java.util.UUID;
 @Getter
 @Setter
 @NoArgsConstructor
-@ToString
+@ToString(exclude = "livros")
 @Table(name="autor")
 public class Autor {
     @Id
@@ -34,7 +34,7 @@ public class Autor {
     @Column(name= "nacionalidade", nullable = false, length = 50)
     private String nacionalidade;
 
-   @OneToMany(mappedBy = "autor")
+   @OneToMany(mappedBy = "autor", fetch = FetchType.LAZYs)
     private List<Livro> livros;
 
 }

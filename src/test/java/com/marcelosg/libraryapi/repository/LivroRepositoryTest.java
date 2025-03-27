@@ -10,6 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.List;
 import java.util.UUID;
 
 @SpringBootTest
@@ -93,5 +94,17 @@ class LivroRepositoryTest {
 
         System.out.println("Autor: ");
         System.out.println( livro.getAutor().getNome());
+    }
+
+    @Test
+    void buscarLivroPorAutorTest(){
+        UUID idAutor = UUID.fromString("6f050300-bd19-4992-890f-288972946af6");
+
+        var autor = autorRepository.findById(idAutor).get();
+
+        List<Livro> livros = livroRepository.findByAutor(autor);
+
+        autor.getLivros().forEach(System.out::println);
+
     }
 }
