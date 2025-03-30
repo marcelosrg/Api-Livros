@@ -24,7 +24,6 @@ public interface LivroRepository extends JpaRepository<Livro, UUID> {
 
     List<Livro> findByTituloAndPreco(String titulo,  BigDecimal preco);
 
-
     //aqui e um exemplo de inner join, fazendo a juncao da tabela livro e da tabela autor, no caso o A no select e a entidade que vai retornar
 
 
