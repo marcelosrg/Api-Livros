@@ -1,6 +1,4 @@
 package com.marcelosg.libraryapi.service;
-
-
 import com.marcelosg.libraryapi.model.Autor;
 import com.marcelosg.libraryapi.repository.AutorRepository;
 import org.springframework.stereotype.Service;
