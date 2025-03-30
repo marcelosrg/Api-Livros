@@ -39,6 +39,7 @@ public class AutorController {
     public ResponseEntity<AutorDto> obterDetlhes(@PathVariable("id") String id) {
         var autorId = UUID.fromString(id);
         Optional<Autor> autorOptional = autorService.obterPorId(autorId);
+
         if(autorOptional.isPresent()){
             Autor autor = autorOptional.get();
             AutorDto dto = new AutorDto(autor.getId(),
@@ -49,5 +50,18 @@ public class AutorController {
             return ResponseEntity.ok(dto);
         }
         return ResponseEntity.notFound().build();
+    }
+
+    @DeleteMapping("{id}")
+    public ResponseEntity<Void> deletarAutor(@PathVariable("id")String id) {
+        var autorId = UUID.fromString(id);
+        Optional<Autor> autorOptional = autorService.obterPorId(autorId);
+
+        if(autorOptional.isEmpty()){
+
+            return ResponseEntity.notFound().build();
+        }
+        autorService.deletar(autorOptional.get());
+        return ResponseEntity.noContent().build();
     }
 }
