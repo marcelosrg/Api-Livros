@@ -4,6 +4,7 @@ import com.marcelosg.libraryapi.repository.AutorRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.PathVariable;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -29,5 +30,21 @@ public class AutorService {
 
     public void deletar(Autor autor){
         autorRepository.delete(autor);
+    }
+
+    public List<Autor> pesquisarAutores(String nome, String nacionalidade){
+        if(nome != null && nacionalidade != null){
+            autorRepository.findByNomeAndNacionalidade(nome,nacionalidade);
+        }
+
+        if(nome != null){
+            return  autorRepository.findByNome(nome);
+        }
+
+        if(nacionalidade != null){
+            return  autorRepository.findByNacionalidade(nacionalidade);
+        }
+
+        return autorRepository.findAll();
     }
 }
