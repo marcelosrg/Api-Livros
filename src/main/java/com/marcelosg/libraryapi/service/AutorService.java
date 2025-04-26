@@ -48,13 +48,11 @@ public class AutorService {
         return autorRepository.findAll();
     }
 
-    public void atualizarAutor(String id, Autor autor){
+    public void atualizarAutor(UUID id, Autor autor){
 
-        var autorId = UUID.fromString(id);
+        Optional<Autor> autorOptional = autorRepository.findById(id);
 
-        Optional<Autor> autorOptional = autorRepository.findById(autorId);
-
-        if(autorOptional == null && autorId != autor.getId()){
+        if(autorOptional == null && id != autor.getId()){
             throw new IllegalArgumentException("O autor não é valido");
         }
         autorRepository.save(autor);

@@ -79,4 +79,25 @@ public class AutorController {
                 autor.getNacionalidade())).collect(Collectors.toList());
         return ResponseEntity.ok(autores);
     }
+
+
+    @PutMapping("{id}")
+    public ResponseEntity<Void> autualizar(@PathVariable("id") UUID id,@RequestBody AutorDto autorDto){
+
+        Optional<Autor> autorOptional = autorService.obterPorId(id);
+
+        if(autorOptional.isEmpty()){
+
+            return ResponseEntity.notFound().build();
+        }
+
+        var autor = autorOptional.get();
+
+        autor.setNome(autorDto.nome());
+        autor.setNacionalidade(autorDto.nacionalidade());
+        autor.setDataNascimento(autorDto.dataNascimento());
+
+        autorService.save(autor);
+        return ResponseEntity.noContent().build();
+    }
 }
