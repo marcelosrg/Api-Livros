@@ -68,7 +68,7 @@ public class AutorController {
         return ResponseEntity.noContent().build();
     }
 
-    @GetMapping
+    @PostMapping
     public ResponseEntity<List<AutorDto>> pesquisarAutores(@RequestParam(value="nome", required = false) String nome, @RequestParam(value="nacionalidade",required = false) String nacionalidade){
 
         List<Autor> resultado = autorService.pesquisarAutores(nome, nacionalidade);
