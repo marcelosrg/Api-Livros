@@ -1,6 +1,7 @@
 package com.marcelosg.libraryapi.service;
 import com.marcelosg.libraryapi.model.Autor;
 import com.marcelosg.libraryapi.repository.AutorRepository;
+import com.marcelosg.libraryapi.validator.AutorValidator;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.PathVariable;
 
@@ -13,13 +14,16 @@ public class AutorService {
 
     private final AutorRepository autorRepository;
 
-    public AutorService(AutorRepository autorRepository) {
+    private final AutorValidator autorValidator;
+
+    public AutorService(AutorRepository autorRepository, AutorValidator autorValidator) {
         this.autorRepository = autorRepository;
+        this.autorValidator = autorValidator;
     }
 
 
     public  Autor save(Autor autor){
-
+        autorValidator.validar(autor);
         return autorRepository.save(autor);
     }
 
@@ -50,8 +54,8 @@ public class AutorService {
 
     public void atualizarAutor(UUID id, Autor autor){
 
+        autorValidator.validar(autor);
         Optional<Autor> autorOptional = autorRepository.findById(id);
-
         if(autorOptional == null && id != autor.getId()){
             throw new IllegalArgumentException("O autor não é valido");
         }

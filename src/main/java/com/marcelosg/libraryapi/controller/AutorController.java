@@ -1,7 +1,9 @@
 package com.marcelosg.libraryapi.controller;
 
+import com.marcelosg.libraryapi.exception.RegistroDuplicadoExeption;
 import com.marcelosg.libraryapi.model.Autor;
 import com.marcelosg.libraryapi.model.dtos.AutorDto;
+import com.marcelosg.libraryapi.model.dtos.ErroResposta;
 import com.marcelosg.libraryapi.service.AutorService;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.http.ResponseEntity;
@@ -10,6 +12,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -26,22 +29,27 @@ public class AutorController {
     }
 
     @PostMapping("criar")
-    public ResponseEntity<Void> criarAutor(@RequestBody AutorDto autor){
+    public ResponseEntity<Object> criarAutor(@RequestBody AutorDto autor){
 
-       var autorEntity = autor.mappingAutorEntity();
-       autorService.save(autorEntity);
+        try{
 
-        URI location = ServletUriComponentsBuilder.fromCurrentRequest()
-                .path("/{id}")
-                .buildAndExpand(autorEntity.getId())
-                .toUri();
+           var autorEntity = autor.mappingAutorEntity();
+           autorService.save(autorEntity);
 
-        return ResponseEntity.created(location).build();
+            URI location = ServletUriComponentsBuilder.fromCurrentRequest()
+                    .path("/{id}")
+                    .buildAndExpand(autorEntity.getId())
+                    .toUri();
+            return ResponseEntity.created(location).build();
+        }catch(RegistroDuplicadoExeption e){
+
+            var errorDTO = ErroResposta.conflito(e.getMessage());
+            return ResponseEntity.status(errorDTO.status()).body(errorDTO);
+        }
     }
     @GetMapping("{id}")
-    public ResponseEntity<AutorDto> obterDetlhes(@PathVariable("id") String id) {
-        var autorId = UUID.fromString(id);
-        Optional<Autor> autorOptional = autorService.obterPorId(autorId);
+    public ResponseEntity<AutorDto> obterDetlhes(@PathVariable("id") UUID id) {
+        Optional<Autor> autorOptional = autorService.obterPorId(id);
 
         if(autorOptional.isPresent()){
             Autor autor = autorOptional.get();
@@ -56,10 +64,8 @@ public class AutorController {
     }
 
     @DeleteMapping("{id}")
-    public ResponseEntity<Void> deletarAutor(@PathVariable("id")String id) {
-        var autorId = UUID.fromString(id);
-        Optional<Autor> autorOptional = autorService.obterPorId(autorId);
-
+    public ResponseEntity<Void> deletarAutor(@PathVariable("id")UUID id) {
+        Optional<Autor> autorOptional = autorService.obterPorId(id);
         if(autorOptional.isEmpty()){
 
             return ResponseEntity.notFound().build();
@@ -82,22 +88,28 @@ public class AutorController {
 
 
     @PutMapping("{id}")
-    public ResponseEntity<Void> autualizar(@PathVariable("id") UUID id,@RequestBody AutorDto autorDto){
+    public ResponseEntity<Object> autualizar(@PathVariable("id") UUID id,@RequestBody AutorDto autorDto){
 
-        Optional<Autor> autorOptional = autorService.obterPorId(id);
+        try{
+            Optional<Autor> autorOptional = autorService.obterPorId(id);
 
-        if(autorOptional.isEmpty()){
+            if(autorOptional.isEmpty()){
 
-            return ResponseEntity.notFound().build();
+                return ResponseEntity.notFound().build();
+            }
+
+            var autor = autorOptional.get();
+
+            autor.setNome(autorDto.nome());
+            autor.setNacionalidade(autorDto.nacionalidade());
+            autor.setDataNascimento(autorDto.dataNascimento());
+
+            autorService.save(autor);
+            return ResponseEntity.noContent().build();
+
+        }catch(RegistroDuplicadoExeption e){
+            var errorDTO = ErroResposta.conflito(e.getMessage());
+            return ResponseEntity.status(errorDTO.status()).body(errorDTO);
         }
-
-        var autor = autorOptional.get();
-
-        autor.setNome(autorDto.nome());
-        autor.setNacionalidade(autorDto.nacionalidade());
-        autor.setDataNascimento(autorDto.dataNascimento());
-
-        autorService.save(autor);
-        return ResponseEntity.noContent().build();
     }
 }
